@@ -63,6 +63,19 @@ class AuthService {
 
     return { findUser, token };
   }
+
+  async refreshToken(dataToken, refreshToken) {
+    return jwt.verify(refreshToken, this.Server.env.JWT_SECRET_KEY, (err, data) => {
+      if (err) {
+        console.log(err)
+        return -1;
+      }
+
+      if (data.id !== dataToken.id) return -2;
+
+      return this.generateToken(dataToken.id);
+    });
+  }
 }
 
 export default AuthService;

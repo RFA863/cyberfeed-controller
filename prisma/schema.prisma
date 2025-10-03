@@ -22,9 +22,7 @@ model Users {
   updated_at  DateTime  @updatedAt
 
   post Posts[]
-  following Follows[] @relation("Following")
-  followers Follows[] @relation("Followers")
-  
+
   @@map("users") 
 }
 
@@ -32,7 +30,7 @@ model Posts {
   id Int @id @default(autoincrement())
   user_id Int
   content String @db.VarChar(200)
-  file String
+  file String? 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
@@ -41,14 +39,4 @@ model Posts {
   @@map("posts")
 }
 
-model Follows {
-  @@id([followerId, followingId])
 
-  followerId Int @map("follower_id")
-  followingId Int @map("following_id")
-
-  follower   Users @relation("Following", fields: [followerId], references: [id])
-  following   Users @relation("Followers", fields: [followingId], references: [id])
-
-  @@map("follows")
-}

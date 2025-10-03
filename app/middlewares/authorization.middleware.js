@@ -1,4 +1,6 @@
-import ResponsePreset from "../helpers/responsePreset.helper";
+import jwt from 'jsonwebtoken';
+
+import ResponsePreset from "../helpers/responsePreset.helper.js";
 
 class AuthorizationMiddleware {
   constructor(Server) {
@@ -21,7 +23,7 @@ class AuthorizationMiddleware {
         ));
       };
 
-      JWT.verify(token, this.Server.env.JWT_SECRET_KEY, (err, data) => {
+      jwt.verify(token, this.Server.env.JWT_SECRET_KEY, (err, data) => {
         if (err) {
           if (!err.name === 'TokenExpiredError') return res.status(401).json(this.ResponsePreset.resErr(
             401,

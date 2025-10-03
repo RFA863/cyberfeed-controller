@@ -51,6 +51,24 @@ class AuthController {
       ));
 
     return res.status(200).json(this.ResponsePreset.resOK("Success", authSrv));
+  };
+
+  async refresToken(req, res) {
+    const tokenData = req.middleware.authorization;
+    const { refreshToken } = req.query;
+    const refreshTokenSrv = await this.AuthService.refreshToken(tokenData, refreshToken);
+
+    if (refreshTokenSrv === -1)
+      return res.status(401).json(this.ResponsePreset.resErr(
+        401, 'Refresh Token Unauthorized', 'service', { code: -1 }
+      ));
+
+    if (refreshTokenSrv === -2)
+      return res.status(401).json(this.ResponsePreset.resErr(
+        401, 'Refresh Token User Id Not Same', 'service', { code: -2 }
+      ));
+
+    return res.status(200).json(this.ResponsePreset.resOK('success', refreshTokenSrv));
   }
 
 }
