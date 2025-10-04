@@ -17,6 +17,7 @@ class AuthController {
 
   async register(req, res) {
     const schemaValidate = this.ajv.compile(this.AuthValidator.input);
+
     if (!schemaValidate(req.body))
       return res.status(400).json(this.ResponsePreset.resErr(
         400, schemaValidate.errors[0].message, 'validator, ', schemaValidate.errors[0]

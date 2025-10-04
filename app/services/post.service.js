@@ -7,7 +7,7 @@ class PostService {
   }
 
   async createPost(userId, req, fileUrl) {
-    console.log('service userid : ' + userId);
+
     const insertPost = await prisma.posts.create({
       data: {
         user_id: userId,
@@ -52,16 +52,37 @@ class PostService {
     return selectPost;
   }
 
-  async editPost(req, postId) {
-    const selectPost = await prisma.posts.findUnique({
+  async editPost(req, postId, fileUrl, userId) {
+
+    const updatePost = await prisma.posts.update({
       where: {
-        id: postId
+        id: postId,
+        AND: [{
+          user_id: userId
+        }]
+
+      },
+      data: {
+        content: req.content,
+        file: fileUrl
       }
     });
 
-    if (!selectPost) return -1;
+    if (!updatePost) return -1
 
-    con
+    return updatePost;
+  }
+
+  async deletePost(postId, userId) {
+
+    const dropPost = await prisma.posts.delete({
+      where: {
+        id: postId,
+        AND: [{
+          user_id: userId
+        }]
+      }
+    });
 
     return;
   }

@@ -16,6 +16,26 @@ class PostRoute {
     this.API.post(this.routePrefix + '/create', this.AuthorizationMiddleware.check(), Upload.single('file'),
       (req, res) => this.PostController.createPost(req, res)
     );
+
+    this.API.get(this.routePrefix + '/get', this.AuthorizationMiddleware.check(),
+      (req, res) => this.PostController.getPost(req, res)
+    );
+
+    this.API.get(this.routePrefix + '/get/my-post', this.AuthorizationMiddleware.check(),
+      (req, res) => this.PostController.getPostByUserId(req, res)
+    );
+
+    this.API.get(this.routePrefix + '/get/:postId', this, AuthorizationMiddleware.check(),
+      (req, res) => this.PostController.getPostById(req, res)
+    );
+
+    this.API.put(this.routePrefix + '/update/:postId', this.AuthorizationMiddleware.check(), Upload.single('file'),
+      (req, res) => this.PostController.editPost(req, res)
+    );
+
+    this.API.delete(this.routePrefix + '/delete/:postId', this.AuthorizationMiddleware.check(),
+      (req, res) => this.PostController.deletePost(req, res)
+    );
   }
 }
 
