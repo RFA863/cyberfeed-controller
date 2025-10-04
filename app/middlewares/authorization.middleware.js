@@ -39,7 +39,7 @@ class AuthorizationMiddleware {
             { code: -3 }
           ));
 
-          data = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString('utf8'));
+          data = jwt.decode(token);
         }
 
         req.middlewares.authorization = data;

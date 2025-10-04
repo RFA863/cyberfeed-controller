@@ -65,16 +65,20 @@ class AuthService {
   }
 
   async refreshToken(dataToken, refreshToken) {
-    return jwt.verify(refreshToken, this.Server.env.JWT_SECRET_KEY, (err, data) => {
-      if (err) {
-        console.log(err)
-        return -1;
+    try {
+
+      const decoded = jwt.verify(refreshToken, this.Server.env.JWT_SECRET_KEY);
+
+      if (decoded.userid !== dataToken.userid) {
+        throw new Error('Token Mismatch');
       }
 
-      if (data.id !== dataToken.id) return -2;
+      return this.generateToken(dataToken.userid);
 
-      return this.generateToken(dataToken.id);
-    });
+    } catch (error) {
+      console.log(error);
+      throw new Error('Invalid or Expired Refresh Token');
+    }
   }
 }
 

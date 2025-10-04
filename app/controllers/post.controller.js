@@ -27,16 +27,9 @@ class PostController {
 
     const data = req.body;
     const file = req.file;
-    const userId = req.middlewares.authorization;
+    const { userid } = req.middlewares.authorization;
 
-    let fileUrl = null;
-
-    if (file) {
-      const result = await UploadFromBuffer(file.buffer);
-      fileUrl = result.secure_url;
-    }
-
-    const postSrv = await this.PostService.createPost(userId.userid, data, fileUrl);
+    const postSrv = await this.PostService.createPost(userid.userid, data, file);
 
     return res.status(200).json(this.ResponsePreset.resOK('Success', postSrv));
   }
@@ -67,7 +60,7 @@ class PostController {
   }
 
   async getPostById(req, res) {
-    const postId = req.params;
+    const { postId } = req.params;
 
     const postSrv = await this.PostService.getPostByUserId(postId);
 
@@ -88,23 +81,22 @@ class PostController {
         400, schemaValidate.errors[0].message, 'validator, ', schemaValidate.errors[0]
       ));
 
-    const userId = req.middlewares.authorization;
-    const postId = req.params;
+    const { userid } = req.middlewares.authorization;
     const data = req.body;
     const file = req.file;
+    const { postId } = req.params;
 
-    let fileUrl = null;
 
-    if (file) {
-      const result = await UploadFromBuffer(file.buffer);
-      fileUrl = result.secure_url;
-    }
-
-    const postSrv = await this.PostService.editPost(data, postId, fileUrl, userId.userid);
+    const postSrv = await this.PostService.editPost(data, id, file, userid);
 
     if (postSrv === -1)
       return res.status(404).json(this.ResponsePreset.resErr(
         404, 'Post not found', 'service', { code: -1 }
+      ));
+
+    if (postSrv === -2)
+      return res.status(404).json(this.ResponsePreset.resErr(
+        403, 'Frbiden, user_id not same', 'service', { code: -2 }
       ));
 
     return res.status(200).json(this.ResponsePreset.resOK('Success', postSrv));
@@ -112,12 +104,22 @@ class PostController {
   }
 
   async deletePost(req, res) {
-    const userId = req.middlewares.authorization;
-    const postId = req.params;
+    const { userid } = req.middlewares.authorization;
+    const { postId } = req.params; // Ekstrak postId dari objek
 
-    const postSrv = await this.PostService.deletePost(postId, userId.userid)
+    const postSrv = await this.PostService.deletePost(postId, userid)
 
-    return res.status(200).json(this.ResponsePreset.resOK('Success', '-'));
+    if (postSrv === -1)
+      return res.status(404).json(this.ResponsePreset.resErr(
+        404, 'Post not found', 'service', { code: -1 }
+      ));
+
+    if (postSrv === -2)
+      return res.status(404).json(this.ResponsePreset.resErr(
+        403, 'Frbiden, user_id not same', 'service', { code: -2 }
+      ));
+
+    return res.status(200).json(this.ResponsePreset.resOK('Success', postSrv));
   }
 }
 

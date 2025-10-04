@@ -1,4 +1,5 @@
 import prisma from "../models/handler.model.js";
+import { UploadFromBuffer, getPublicIdFromUrl, deleteFromCloudinary } from '../helpers/cloudinary.helpers.js';
 
 class PostService {
   constructor(Server) {
@@ -6,14 +7,20 @@ class PostService {
     this.API = this.Server.API;
   }
 
-  async createPost(userId, req, fileUrl) {
+  async createPost(userId, req, file) {
+
+    const dataCreatePost = {
+      user_id: userId,
+      content: req.content
+    }
+
+    if (file) {
+      const result = await UploadFromBuffer(file.buffer);
+      dataCreatePost.file = result.secure_url;
+    }
 
     const insertPost = await prisma.posts.create({
-      data: {
-        user_id: userId,
-        content: req.content,
-        file: fileUrl
-      }
+      data: dataCreatePost
     });
 
     return insertPost;
@@ -52,37 +59,63 @@ class PostService {
     return selectPost;
   }
 
-  async editPost(req, postId, fileUrl, userId) {
+  async editPost(req, postId, file, userId) {
 
-    const updatePost = await prisma.posts.update({
-      where: {
-        id: postId,
-        AND: [{
-          user_id: userId
-        }]
+    let fileUrl;
 
-      },
-      data: {
-        content: req.content,
-        file: fileUrl
-      }
+    const findPost = await prisma.posts.findUnique({
+      where: { id: postId }
     });
 
-    if (!updatePost) return -1
+    if (!findPost) return -1;
+    if (findPost.user_id !== userId) return -2;
+
+    const dataEditPost = {
+      content: req.content
+    };
+
+    if (file) {
+      const result = await UploadFromBuffer(file.buffer);
+      fileUrl = result.secure_url;
+    };
+
+    if (fileUrl) {
+      if (findPost.file) {
+        const oldPublicId = getPublicIdFromUrl(findPost.file);
+        if (oldPublicId) {
+          await deleteFromCloudinary(oldPublicId).catch(err => console.error("Gagal menghapus file lama:", err));
+        }
+      }
+      dataEditPost.file = fileUrl;
+    };
+
+    const updatePost = await prisma.posts.update({
+      where: { id: postId },
+      data: dataEditPost,
+    });
 
     return updatePost;
   }
 
   async deletePost(postId, userId) {
 
-    const dropPost = await prisma.posts.delete({
-      where: {
-        id: postId,
-        AND: [{
-          user_id: userId
-        }]
-      }
+    const findPost = await prisma.posts.findUnique({
+      where: { id: postId }
     });
+
+    if (!findPost) return -1;
+    if (findPost.user_id !== userId) return -2;
+
+    if (findPost.file) {
+      const publicId = getPublicIdFromUrl(findPost.file);
+      if (publicId) {
+        await deleteFromCloudinary(publicId).catch(err => console.error("Gagal menghapus file dari Cloudinary:", err));
+      }
+    }
+
+    await prisma.posts.delete({ where: { id: postId } });
+
+    return { message: "Post deleted successfully" };
 
     return;
   }
