@@ -28,7 +28,18 @@ class PostService {
   }
 
   async getPost() {
-    const selectPost = await prisma.posts.findMany();
+    const selectPost = await prisma.posts.findMany({
+      include: {
+        user: {
+          select: {
+            id: true,
+            username: true
+          }
+        },
+      }, orderBy: {
+        updated_at: 'desc'
+      }
+    });
 
     if (!selectPost) return -1;
 
@@ -39,6 +50,16 @@ class PostService {
     const selectPost = await prisma.posts.findMany({
       where: {
         user_id: userId
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            username: true
+          }
+        },
+      }, orderBy: {
+        updated_at: 'desc'
       }
     });
 
@@ -48,9 +69,20 @@ class PostService {
   }
 
   async getPostById(postId) {
+
+    const id = parseInt(postId);
+
     const selectPost = await prisma.posts.findUnique({
       where: {
-        id: postId
+        id: id
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            username: true
+          }
+        },
       }
     })
 
@@ -61,10 +93,12 @@ class PostService {
 
   async editPost(req, postId, file, userId) {
 
+    const id = parseInt(postId);
+
     let fileUrl;
 
     const findPost = await prisma.posts.findUnique({
-      where: { id: postId }
+      where: { id: id }
     });
 
     if (!findPost) return -1;
@@ -90,8 +124,13 @@ class PostService {
     };
 
     const updatePost = await prisma.posts.update({
-      where: { id: postId },
+      where: { id: id },
       data: dataEditPost,
+      include: {
+        user: {
+          select: { id: true, username: true }
+        }
+      }
     });
 
     return updatePost;
@@ -99,8 +138,10 @@ class PostService {
 
   async deletePost(postId, userId) {
 
+    const id = parseInt(postId);
+
     const findPost = await prisma.posts.findUnique({
-      where: { id: postId }
+      where: { id: id }
     });
 
     if (!findPost) return -1;
@@ -113,7 +154,7 @@ class PostService {
       }
     }
 
-    await prisma.posts.delete({ where: { id: postId } });
+    await prisma.posts.delete({ where: { id: id } });
 
     return { message: "Post deleted successfully" };
 

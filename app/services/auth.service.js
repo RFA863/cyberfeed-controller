@@ -11,12 +11,12 @@ class AuthService {
 
   generateToken(id) {
     const token = jwt.sign(
-      { userid: id }, this.Server.env.JWT_SECRET_KEY,
+      { userid: id }, this.Server.env.JWT_ACCESS_TOKEN_SECRET,
       { expiresIn: this.Server.env.JWT_EXPIRED_KEY }
     );
 
     const refreshToken = jwt.sign(
-      { userid: id }, this.Server.env.JWT_SECRET_KEY
+      { userid: id }, this.Server.env.JWT_REFRESH_TOKEN_SECRET
     );
 
     return { token, refreshToken };
@@ -38,30 +38,29 @@ class AuthService {
       }
     });
 
-    console.log(userData);
+    delete userData.password
 
-    return { username: userData.username };
+    return userData;
   }
 
   async login(req) {
-    // const hashPassword = await bcrypt.hash(req.password, 10);
 
-    const findUser = await prisma.users.findUnique({
+    const user = await prisma.users.findUnique({
       where: {
         username: req.username,
       }
     });
 
-    if (!findUser) return -1;
+    if (!user) return -1;
 
-    const matchPassword = await bcrypt.compare(req.password, findUser.password);
+    const matchPassword = await bcrypt.compare(req.password, user.password);
 
     if (!matchPassword) return -2;
 
-    const token = this.generateToken(findUser.id);
-    delete findUser.password
+    const token = this.generateToken(user.id);
+    delete user.password
 
-    return { findUser, token };
+    return { user, token };
   }
 
   async refreshToken(dataToken, refreshToken) {

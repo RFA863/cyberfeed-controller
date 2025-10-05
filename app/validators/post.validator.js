@@ -1,14 +1,14 @@
 class PostValidator {
   input = {
-    type: 'object',
+    type: "object",
     properties: {
       content: {
-        type: 'String',
+        type: "string",
         maxLength: 200,
         minLength: 1
       }
     },
-    required: ['content'],
+    required: ["content"],
     additionalProperties: false
   };
 }

@@ -25,7 +25,7 @@ class PostRoute {
       (req, res) => this.PostController.getPostByUserId(req, res)
     );
 
-    this.API.get(this.routePrefix + '/get/:postId', this, AuthorizationMiddleware.check(),
+    this.API.get(this.routePrefix + '/get/:postId', this.AuthorizationMiddleware.check(),
       (req, res) => this.PostController.getPostById(req, res)
     );
 

@@ -1,7 +1,6 @@
 import Ajv from 'ajv';
 
 import PostService from '../services/post.service.js';
-import UploadFromBuffer from '../helpers/cloudinary.helpers.js'
 import ResponsePreset from '../helpers/responsePreset.helper.js'
 import PostValidator from '../validators/post.validator.js';
 
@@ -29,7 +28,7 @@ class PostController {
     const file = req.file;
     const { userid } = req.middlewares.authorization;
 
-    const postSrv = await this.PostService.createPost(userid.userid, data, file);
+    const postSrv = await this.PostService.createPost(userid, data, file);
 
     return res.status(200).json(this.ResponsePreset.resOK('Success', postSrv));
   }
@@ -47,9 +46,9 @@ class PostController {
 
   async getPostByUserId(req, res) {
 
-    const userId = req.middlewares.authorization;
+    const { userid } = req.middlewares.authorization;
 
-    const postSrv = await this.PostService.getPostByUserId(userId.userid);
+    const postSrv = await this.PostService.getPostByUserId(userid);
 
     if (postSrv === -1)
       return res.status(404).json(this.ResponsePreset.resErr(
@@ -62,7 +61,7 @@ class PostController {
   async getPostById(req, res) {
     const { postId } = req.params;
 
-    const postSrv = await this.PostService.getPostByUserId(postId);
+    const postSrv = await this.PostService.getPostById(postId);
 
     if (postSrv === -1)
       return res.status(404).json(this.ResponsePreset.resErr(
@@ -87,7 +86,7 @@ class PostController {
     const { postId } = req.params;
 
 
-    const postSrv = await this.PostService.editPost(data, id, file, userid);
+    const postSrv = await this.PostService.editPost(data, postId, file, userid);
 
     if (postSrv === -1)
       return res.status(404).json(this.ResponsePreset.resErr(
@@ -105,7 +104,7 @@ class PostController {
 
   async deletePost(req, res) {
     const { userid } = req.middlewares.authorization;
-    const { postId } = req.params; // Ekstrak postId dari objek
+    const { postId } = req.params;
 
     const postSrv = await this.PostService.deletePost(postId, userid)
 
