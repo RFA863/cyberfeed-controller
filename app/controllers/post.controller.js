@@ -38,7 +38,7 @@ class PostController {
 
     if (postSrv === -1)
       return res.status(404).json(this.ResponsePreset.resErr(
-        404, 'No Post', 'service', { code: -1 }
+        404, 'No Post yet', 'service', { code: -1 }
       ));
 
     return res.status(200).json(this.ResponsePreset.resOK('Success', postSrv));
@@ -52,7 +52,7 @@ class PostController {
 
     if (postSrv === -1)
       return res.status(404).json(this.ResponsePreset.resErr(
-        404, 'No Post', 'service', { code: -1 }
+        404, 'No post yet', 'service', { code: -1 }
       ));
 
     return res.status(200).json(this.ResponsePreset.resOK('Success', postSrv));

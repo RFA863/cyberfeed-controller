@@ -41,7 +41,7 @@ class PostService {
       }
     });
 
-    if (!selectPost) return -1;
+    if (selectPost.length === 0) return -1;
 
     return selectPost;
   }
@@ -63,7 +63,7 @@ class PostService {
       }
     });
 
-    if (!selectPost) return -1;
+    if (selectPost.length === 0) return -1;
 
     return selectPost;
   }
@@ -86,7 +86,7 @@ class PostService {
       }
     })
 
-    if (!selectPost) return -1;
+    if (selectPost.length === 0) return -1;
 
     return selectPost;
   }
