@@ -1,4 +1,4 @@
-import Upload from "../middlewares/multer.middleware.js";
+import handleUpload from '../middlewares/multer.middleware.js';
 import AuthorizationMiddleware from '../middlewares/authorization.middleware.js'
 import PostController from "../controllers/post.controller.js";
 
@@ -13,7 +13,7 @@ class PostRoute {
   }
 
   route() {
-    this.API.post(this.routePrefix + '/create', this.AuthorizationMiddleware.check(), Upload.single('file'),
+    this.API.post(this.routePrefix + '/create', this.AuthorizationMiddleware.check(), handleUpload('file'),
       (req, res) => this.PostController.createPost(req, res)
     );
 
@@ -29,7 +29,7 @@ class PostRoute {
       (req, res) => this.PostController.getPostById(req, res)
     );
 
-    this.API.put(this.routePrefix + '/update/:postId', this.AuthorizationMiddleware.check(), Upload.single('file'),
+    this.API.put(this.routePrefix + '/update/:postId', this.AuthorizationMiddleware.check(), handleUpload('file'),
       (req, res) => this.PostController.editPost(req, res)
     );
 
