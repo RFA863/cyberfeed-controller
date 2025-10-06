@@ -5,8 +5,8 @@ This is the API for a simple social media application called CyberFeed. It allow
 ---
 ## API
 
-* **API Documentation**: [https://documenter.getpostman.com/view/29309207/2sB3QGvCaQ](https://documenter.getpostman.com/view/29309207/2sB3QGvCaQ)
-* **API Endpoint**: [https://cyberfeed-controller.vercel.app](https://cyberfeed-controller.vercel.app)
+* **API Documentation**: https://documenter.getpostman.com/view/29309207/2sB3QGvCaQ
+* **API Endpoint**: https://cyberfeed-controller.vercel.app
 
 ---
 ## Features
@@ -41,7 +41,7 @@ This is the API for a simple social media application called CyberFeed. It allow
 1.  **Clone this repository:**
 
     ```bash
-    git clone [https://github.com/rfa863/cyberfeed-controller.git](https://github.com/rfa863/cyberfeed-controller.git)
+    git clone https://github.com/rfa863/cyberfeed-controller.git
     ```
 
 2.  **Navigate to the project directory:**
@@ -67,11 +67,16 @@ This is the API for a simple social media application called CyberFeed. It allow
     ```
     PORT=...
     HOST=...
+    
+    # Supabase Prisma ORM Config
     DATABASE_URL=...
-    HASH_SALT=...
+    DIRECT_URL=...
+  
     JWT_ACCESS_TOKEN_SECRET=...
     JWT_REFRESH_TOKEN_SECRET=...
-    JWT_EXPIRED_KEY=...
+    JWT_EXPIRED_KEY='1h'
+
+    # Cloudinary Config
     CLOUDINARY_CLOUD_NAME=...
     CLOUDINARY_API_KEY=...
     CLOUDINARY_SECRET_KEY=...
