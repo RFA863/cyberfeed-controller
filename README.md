@@ -3,7 +3,12 @@
 This is the API for a simple social media application called CyberFeed. It allows users to sign up, log in, and perform actions like creating, reading, updating, and deleting posts.
 
 ---
+## API
 
+* **API Documentation**: [https://documenter.getpostman.com/view/29309207/2sB3QGvCaQ](https://documenter.getpostman.com/view/29309207/2sB3QGvCaQ)
+* **API Endpoint**: [https://cyberfeed-controller.vercel.app](https://cyberfeed-controller.vercel.app)
+
+---
 ## Features
 
 * **User Authentication**:
